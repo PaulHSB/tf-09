@@ -201,3 +201,52 @@ class Atalho(Item):
     def mostrar(self):
         recuo = "    " * self.profundidade()
         print(recuo + self.nome + " -> " + self.__destino.caminho())
+        
+
+
+raiz = Pasta("C:")
+usuarios = Pasta("Users", raiz)
+usuario = Pasta("peaga", usuarios)
+desktop = Pasta("Desktop", usuario)
+documentos = Pasta("Documentos", usuario)
+
+
+trabalho = Arquivo("trabalho.py", 1200, documentos)
+foto = Arquivo("foto.png", 3500, desktop)
+anotacoes = Arquivo("anotacoes.txt", 300, usuario)
+
+
+atalho_trabalho = Atalho("trabalho.lnk", trabalho, desktop)
+atalho_documentos = Atalho("Documentos.lnk", documentos, desktop)
+
+print("Arvore completa:")
+raiz.mostrar()
+
+
+lixeira = Lixeira()
+lixeira.descartar(Arquivo("rascunho.txt", 800))
+
+print()
+print("Espaco total (trabalho.py + Desktop + lixeira):", espaco_total([trabalho, desktop, lixeira]), "B")
+
+
+
+def mudar_destino_direto():
+    atalho_trabalho.destino = anotacoes
+
+
+
+def apontar_para_ele_mesmo():
+    atalho_trabalho.redirecionar(atalho_trabalho)
+
+
+
+def apontar_para_a_propria_pasta():
+    atalho_trabalho.redirecionar(desktop)
+
+
+print()
+print("Tentativas que tem que dar erro:")
+tentar("mudar atalho.destino direto", mudar_destino_direto)
+tentar("atalho apontando para ele mesmo", apontar_para_ele_mesmo)
+tentar("atalho apontando para a propria pasta", apontar_para_a_propria_pasta)
