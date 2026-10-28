@@ -160,3 +160,44 @@ def tentar(rotulo, acao):
         print(rotulo, "-> passou (!)")
     except Exception as erro:
         print(rotulo, "->", type(erro).__name__ + ":", erro)
+
+#o Atalho é um Item que só aponta para outro Item.
+class Atalho(Item):
+    __slots__ = ("__destino",)
+
+    #construtor de atalho, nome e pai sao herdados de Item
+    def __init__(self, nome, destino, pai=None):
+        super().__init__(nome)
+        self.__validar_destino(destino, pai)
+        self.__destino = destino
+
+        if pai is not None:
+            self.mover_para(pai)
+
+    #getter de destino
+    @property
+    def destino(self):
+        return self.__destino
+
+    #destino é um atributo privado, portanto só é possivel muda-lo atraves desse método
+    def redirecionar(self, novo_destino):
+        self.__validar_destino(novo_destino, self)
+        self.__destino = novo_destino
+
+    # valida se o destino nao esta apontando para ele mesmo subindo pasta por pasta e verificando ate nao ter mais pasta para
+    #subir ou o ponto de partida ser igual ao destino.
+    def __validar_destino(self, novo_destino, ponto_de_partida):
+        ancestral = ponto_de_partida
+        while ancestral is not None:
+            if ancestral is novo_destino:
+                raise ValueError("o atalho " + self.nome + " não pode apontar para si mesmo nem para uma pasta que o contém")
+            ancestral = ancestral.pai
+
+    #Aqui entra o polimorfismo, a funcao tamanho mas com uma implementacao diferente
+    def tamanho(self):
+        return 1
+
+    # Mostra o atalho com o mesmo recuo dos outros itens, apontando para o destino.
+    def mostrar(self):
+        recuo = "    " * self.profundidade()
+        print(recuo + self.nome + " -> " + self.__destino.caminho())
